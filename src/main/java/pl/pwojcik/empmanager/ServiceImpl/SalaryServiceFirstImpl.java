@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.decimal4j.util.DoubleRounder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -144,7 +145,7 @@ public class SalaryServiceFirstImpl implements SalaryService {
 		List<MonthlyAverage> result = new ArrayList<>();
 		for(Object[] row : dbRawData) {
 			// row[0] - String header, // row[1] - full date (for sql query)  row[2] average  
-			result.add(new MonthlyAverage(String.valueOf(row[0]),Double.valueOf(String.valueOf(row[2]))));
+			result.add(new MonthlyAverage(String.valueOf(row[0]), DoubleRounder.round(Double.valueOf(String.valueOf(row[2])),2)));
 		}
 		return result;
 	}
