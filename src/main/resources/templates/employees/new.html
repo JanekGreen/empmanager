@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="manager">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <!--<link rel="icon" href="../../favicon.ico"/>-->
+
+    <title>Spring Boot Web Application</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous"/>
+    <link th:href="@{'/css/sticky-footer-navbar.css'}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<!--<nav class="navbar navbar-default navbar-fixed-top">-->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+             <a class="navbar-brand" th:href="@{'/'}">EmpManager</a>
+        </div>
+        <ul class="nav navbar-nav">
+			<li><a th:href="@{'/employees?page=1'}">Employees</a></li>
+			<li><a th:href="@{'/salaries?page=1'}">Salaries</a></li>
+		</ul>
+    </div>
+</nav>
+
+<div class="container">
+    <div>
+        <form method="post" name="employee_form" id="employee_form" th:action="@{'/employees/create'}" th:object="${employee}" role="form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" th:field="*{name}"/>
+                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</span>
+            </div>
+            <div class="form-group ">
+            	<label for="surname">Surname</label>
+            	<input type="text" class="form-control" id="surname" name="surname" th:field="*{surname}"/>
+            	 <span class="text-danger" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</span>
+            </div>
+            <div class="form-group">
+            	<label for="birthdate">Birthdate</label>
+            	<input type="date" class="form-control" id="birthdate" name="birthdate"  th:field="*{birthdate}" />
+            	 <span class="text-danger" th:if="${#fields.hasErrors('birthdate')}" th:errors="*{birthdate}">Birthdate error</span>
+            </div>	
+            <div class="form-group">
+            	<label for="hiredate">Hiredate</label>
+            	<input type="date" class="form-control" id="hiredate" name="hiredate"  th:field="*{hiredate}" />
+            	 <span class="text-danger" th:if="${#fields.hasErrors('hiredate')}" th:errors="*{hiredate}">hiredate error</span>
+            </div>	
+            <div class="form-group">
+            	<label for="email"> e-mail</label>
+            	<input type="email" class="form-control" id="email" name="email" th:field="*{email}"/>
+            	 <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</span>
+            </div>
+            <div class="form-group">
+            	<label for="phone">Phone</label>
+            	<input type="tel" class="form-control" id="phone" name="phone" th:field="*{phone}"/>  
+            	 <span class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}">Phone error</span>
+            </div>
+            <div class="form-group">
+            	<label for="address">Address</label>
+            	<textarea rows="3" class="form-control" id="address" name="address" th:field="*{address}"></textarea>  
+            	 <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Address error</span>
+            </div>
+ 
+         <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+</div>
+<!-- /.container -->
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">Paweł Wójcik.</p>
+    </div>
+</footer>
+
+</body>
+
+</html>

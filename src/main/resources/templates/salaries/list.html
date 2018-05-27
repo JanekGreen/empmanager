@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="manager">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--<link rel="icon" href="../../favicon.ico"/>-->
+    <title>EmpManager - Employee management system</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous" />
+    <link th:href="@{'/css/sticky-footer-navbar.css'}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <!-- Fixed navbar -->
+    <!--<nav class="navbar navbar-default navbar-fixed-top">-->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" th:href="@{'/'}">EmpManager</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{'/employees?page=1'}">Employees</a></li>
+                <li><a th:href="@{'/salaries?page=1'}">Salaries</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div>
+            <a class="btn btn-primary" th:href="@{'/salaries/new'}">Add new
+				Salary</a>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Search</button>
+            <a class="btn btn-primary" th:href="@{'/salaries/monthly'}">Average
+				salary monthly</a>
+            <form style="display: inline-block !important;" th:action="@{'/empmanager/../reports/pdf/salaries'}" method="GET">
+                <input type="hidden" id="column" th:if="${param.column !=null}" name="column" th:value="${param.column}">
+                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC">
+                <input type="hidden" th:if="${param.sort != null}" id="sort" name="sort" th:value="${param.sort}">
+                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                <button class="btn btn-primary" type="submit">Print pdf report
+                </button>
+            </form>
+            <form style="display: inline-block !important;" th:action="@{'/empmanager/../reports/csv/salaries'}" method="GET">
+                <input type="hidden" id="column" th:if="${param.column !=null}" name="column" th:value="${param.column}">
+                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC">
+                <input type="hidden" th:if="${param.sort != null}" id="sort" name="sort" th:value="${param.sort}">
+                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                <button class="btn btn-primary" type="submit">Csv report</button>
+            </form>
+
+            <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Search</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form th:action="@{'/salaries/search'}" method="get">
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <input type="text" class="form-control" id="description" name="description" th:value="${param.description}" />
+                                </div>
+                                <div class="form-group ">
+                                    <label for="amount_from">Amount from</label>
+                                    <input type="number" min="1" class="form-control" id="amount_from" name="amount_from" th:value="${param.amount_from}" />
+                                </div>
+                                <div class="form-group ">
+                                    <label for="amount_to">Amount to</label>
+                                    <input type="number" min="1" class="form-control" id="amount_to" name="amount_to" th:value="${param.amount_to}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="date_from">Date from</label>
+                                    <input type="date" class="form-control" id="date_from" name="date_from" th:value="${param.date_from}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="date_to">Date to</label>
+                                    <input type="date" class="form-control" id="date_to" name="date_to" th:value="${param.date_to}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="name"> name</label>
+                                    <input type="text" class="form-control" id="name" name="name" th:value="${param.name}" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="Surname">Surname</label>
+                                    <input type="text" class="form-control" id="surname" name="surname" th:value="${param.surname}" />
+                                </div>
+                                <button class="btn btn-primary" type="submit">Search</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- stop -->
+            <table class="table table-striped" id="salaries_list">
+                <thead>
+                    <tr>
+                        <th th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                            <form th:action="@{${urlBuilder.toUriString()}}" method="GET">
+                                <input type="hidden" id="column" name="column" value="id">
+                                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC"> <span th:if="${param.sort != null}"> <input type="hidden"
+									th:if="${param.sort[0] == 'ASC'}" id="sort" name="sort"
+									value="DESC"> <input type="hidden"
+									th:if="${param.sort[0] =='DESC'}" id="sort" name="sort"
+									value="ASC">
+								</span>
+                                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                                <!-- <button type="submit"><i>Name</i></button> -->
+                                <a href="#" onclick="this.parentNode.submit();"> Id</a>
+                            </form>
+                        </th>
+                        <th th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                            <form th:action="@{${urlBuilder.toUriString()}}" method="GET">
+                                <input type="hidden" id="column" name="column" value="description">
+                                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC">
+                                <span th:if="${param.sort != null}"> <input type="hidden"
+									th:if="${param.sort[0] == 'ASC'}" id="sort" name="sort"
+									value="DESC"> <input type="hidden"
+									th:if="${param.sort[0] =='DESC'}" id="sort" name="sort"
+									value="ASC">
+								</span>
+                                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                                <!-- <button type="submit"><i>Name</i></button> -->
+                                <a href="#" onclick="this.parentNode.submit();">Description</a>
+                            </form>
+                        </th>
+                        <th th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                            <form th:action="@{${urlBuilder.toUriString()}}" method="GET">
+                                <input type="hidden" id="column" name="column" value="amount">
+                                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC"> <span th:if="${param.sort != null}"> <input type="hidden"
+									th:if="${param.sort[0] == 'ASC'}" id="sort" name="sort"
+									value="DESC"> <input type="hidden"
+									th:if="${param.sort[0] =='DESC'}" id="sort" name="sort"
+									value="ASC">
+								</span>
+                                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                                <!-- <button type="submit"><i>Name</i></button> -->
+                                <a href="#" onclick="this.parentNode.submit();">Amount</a>
+                            </form>
+                        </th>
+                        <th th:with="urlBuilder=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+                            <form th:action="@{${urlBuilder.toUriString()}}" method="GET">
+                                <input type="hidden" id="column" name="column" value="date">
+                                <input type="hidden" th:if="${param.sort == null}" id="sort" name="sort" value="ASC"> <span th:if="${param.sort != null}"> <input type="hidden"
+									th:if="${param.sort[0] == 'ASC'}" id="sort" name="sort"
+									value="DESC"> <input type="hidden"
+									th:if="${param.sort[0] =='DESC'}" id="sort" name="sort"
+									value="ASC">
+								</span>
+                                <input type="hidden" th:if="${param.date_from!=null}" name="date_from" id="date_from" th:value="${param.date_from}">
+                                <input type="hidden" th:if="${param.date_to!=null}" name="date_to" id="date_to" th:value="${param.date_to}">
+                                <input type="hidden" th:if="${param.amount_from!=null}" name="amount_from" id="amount_from" th:value="${param.amount_from}">
+                                <input type="hidden" th:if="${param.amount_to!=null}" name="amount_to" id="amount_to" th:value="${param.amount_to}">
+                                <input type="hidden" th:if="${param.description!=null}" name="description" id="description" th:value="${param.description}">
+                                <input type="hidden" th:if="${param.name!=null}" name="name" id="name" th:value="${param.name}">
+                                <input type="hidden" th:if="${param.surname!=null}" name="surname" id="surname" th:value="${param.surname}">
+                                <!-- <button type="submit"><i>Name</i></button> -->
+                                <a href="#" onclick="this.parentNode.submit();">Date</a>
+                            </form>
+                        </th>
+                        <th>Employee</th>
+                        <th>Delete</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-th-each="salary : ${salaries}">
+                        <td class="content"><span data-th-text="${salary.id}"></span>
+                        </td>
+                        <td class="content"><span data-th-text="${salary.description}"></span></td>
+                        <td class="content"><span data-th-text="${salary.amount}"></span></td>
+                        <td class="content"><span data-th-text="${salary.date}"></span></td>
+                        <td class="content"><span data-th-text="${salary.employee.name}+' '+${salary.employee.surname}"></span></td>
+                        <td>
+                            <form th:action="@{'/salaries/delete'}" method="post" onclick="return confirm('Are you sure?')">
+                                <input type="hidden" id="salary_id" name="salary_id" th:value="${salary.id}">
+                                <button type="submit">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{'/salaries/edit'}" method="POST">
+                                <input type="hidden" id="salary_id" name="salary_id" th:value="${salary.id}">
+                                <button type="submit">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav aria-label="pagination">
+                <div th:if="${noOfPages > 1}">
+                    <h6>
+						<span data-th-text="'Page '+ ${page+1} + ' of '+${noOfPages}"></span>
+					</h6>
+                </div>
+                <div th:if="${page == 0 and noOfPages >1}">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" th:href="@{'/salaries?page={p}' (p=${page+2})}">Next</a></li>
+                    </ul>
+                </div>
+                <div th:if="${page < noOfPages-1 and page >0 }">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" th:href="@{'/salaries?page={p}' (p=${page})}">Previous</a></li>
+                        <li class="page-item"><a class="page-link" th:href="@{'/salaries?page={p}' (p=${page+2})}">Next</a></li>
+                    </ul>
+                </div>
+                <div th:if="${page == noOfPages-1 and noOfPages > 1 }">
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" th:href="@{'/salaries?page={p}' (p=${page})}">Previous</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <div class="container">
+            <p>Information presented below are calculated based on active search filter</p>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3>Summary</h3>
+                    </div>
+                    <div class="panel-body">
+                        <span data-th-text="'Total money spent: '+ ${sum}"></span>
+                        <br>
+                        <span data-th-text="'Average salary: '+${average}"></span>
+                        <br>
+                        <span th:if=${highest!=null} data-th-text="'Highest salary: '+ ${highest.amount}+' '+${highest.employee.name}+' '+${highest.employee.surname}"></span>
+                        <br>
+                        <span th:if=${lowest!=null} data-th-text="'Lowest salary '+ ${lowest.amount}+' '+${lowest.employee.name}+' '+${lowest.employee.surname}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">Paweł Wójcik</p>
+        </div>
+    </footer>
+</body>
+
+</html>

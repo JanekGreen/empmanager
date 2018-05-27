@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="manager">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--<link rel="icon" href="../../favicon.ico"/>-->
+
+    <title>Spring Boot Web Application</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous" />
+    <link th:href="@{'/css/sticky-footer-navbar.css'}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <!-- Fixed navbar -->
+    <!--<nav class="navbar navbar-default navbar-fixed-top">-->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" th:href="@{'/'}">EmpManager</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{'/employees?page=1'}">Employees</a></li>
+                <li><a th:href="@{'/salaries?page=1'}">Salaries</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div>
+            <div class="container">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3>
+								<span data-th-text="${employee.name}+' '+${employee.surname}"></span>
+							</h3>
+                        </div>
+                        <div class="panel-body">
+                            <span data-th-text="'Name and surname: '+ ${employee.name}+' '+${employee.surname}"></span>
+                            <br>
+                            <span data-th-text="'Birthdate: '+${employee.birthdate}"></span>
+                            <br>
+                            <span data-th-text="'Hiredate: '+${employee.hiredate}"></span>
+                            <br>
+                            <span data-th-text="'Phone: '+${employee.phone}"></span>
+                            <br>
+                            <span data-th-text="'e-mail: '+${employee.email}"></span>
+                            <br>
+                            <span data-th-text="'Address: '+${employee.address}"></span>
+                            <br>
+                            <span th:if=${highest!=null} data-th-text="'Highest salary: '+ ${highest.amount}+' '+${highest.employee.name}+' '+${highest.employee.surname}"></span>
+                            <br>
+                            <span th:if=${lowest!=null} data-th-text="'Lowest salary '+ ${lowest.amount}+' '+${lowest.employee.name}+' '+${lowest.employee.surname}"></span>
+                            <form th:action="@{'/employees/edit'}" method="POST">
+                                <input type="hidden" id="employee_id" name="employee_id" th:value="${employee.id}">
+                                <button class="btn btn-primary" type="submit">Edit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3>
+				<span th:if="${salaries.size()>0}"
+					data-th-text="${employee.name}+ ' '+${employee.surname}+' salaries'"></span>
+			</h3>
+            <table th:if="${salaries.size()>0}" class="table table-striped" id="salaries_list">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>date</th>
+                        <th>Employee</th>
+                        <th>Delete</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-th-each="salary : ${salaries}">
+                        <td class="content"><span data-th-text="${salary.id}"></span></td>
+                        <td class="content"><span data-th-text="${salary.description}"></span></td>
+                        <td class="content"><span data-th-text="${salary.amount}"></span></td>
+                        <td class="content"><span data-th-text="${salary.date}"></span></td>
+                        <td class="content"><span data-th-text="${salary.employee.name}+' '+${salary.employee.surname}"></span></td>
+                        <td>
+                            <form th:action="@{'/salaries/delete'}" method="post">
+                                <input type="hidden" id="salary_id" name="salary_id" th:value="${salary.id}">
+                                <button type="submit">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{'/salaries/edit'}" method="POST">
+                                <input type="hidden" id="salary_id" name="salary_id" th:value="${salary.id}">
+                                <button type="submit">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+    <footer class="footer">
+        <div class="container">
+            <p class="text-muted">Paweł Wójcik.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>

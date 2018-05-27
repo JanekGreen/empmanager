@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" ng-app="manager">
+   <head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+      <meta name="description" content="" />
+      <meta name="author" content="" />
+      <!--<link rel="icon" href="../../favicon.ico"/>-->
+      <title>EmpManager - Employee management system</title>
+      <!-- Bootstrap core CSS -->
+      <link rel="stylesheet"
+         href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+         integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+         crossorigin="anonymous" />
+      <link th:href="@{'/css/sticky-footer-navbar.css'}" rel="stylesheet" />
+      <script
+         src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script
+         src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+         integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
+         crossorigin="anonymous"></script>
+         
+         <script>
+
+		$(document).ready(function(){
+			let queryString = window.location.search.substring(1) !=null? window.location.search.substring(1): "";  ;
+			$.ajax({
+				url: "empmanager/../reports/sum/salary?"+queryString,
+				method: "GET",
+				success: function(data) {
+					console.log(data);
+					var labels = [];
+					var sumSalary = [];
+					var colors = [];
+					
+					var randColors = function() {
+			            var r = Math.floor(Math.random() * 255);
+			            var g = Math.floor(Math.random() * 255);
+			            var b = Math.floor(Math.random() * 255);
+			            return "rgb(" + r + "," + g + "," + b + ")";
+			         };
+		
+					for(var i in data) {
+						labels.push(data[i].name+" "+data[i].surname);
+						sumSalary.push(data[i].sumSalary);
+						colors.push(randColors());
+					}
+					console.log(labels);
+					console.log(sumSalary);
+					var options= {
+						responsive: false,
+	                    maintainAspectRatio: false
+					};
+					
+					var chartdata = {
+						labels: labels,
+						datasets : [
+							{
+								label: 'Sum salary per employee',
+								backgroundColor: colors,
+								borderColor: 'rgba(255,255,255,1)',
+								hoverBackgroundColor: 'rgba(217,83,79,0.75)',
+								hoverBorderColor: 'rgba(255, 255, 255, 1)',
+								data: sumSalary
+							}
+						]
+					};
+		
+					var ctx = $("#myChart");
+		
+					var barGraph = new Chart(ctx, {
+						type: 'pie',
+						data: chartdata,
+						options: options
+					});
+				},
+				error: function(data) {
+					console.log(data);
+				}
+			});
+		});
+
+
+</script>
+   </head>
+   <body>
+ 
+   	<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+      <!-- Fixed navbar -->
+      <!--<nav class="navbar navbar-default navbar-fixed-top">-->
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+         <div class="container">
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle collapsed"
+                  data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+                  aria-controls="navbar">
+               <span class="sr-only">Toggle navigation</span> <span
+                  class="icon-bar"></span> <span class="icon-bar"></span> <span
+                  class="icon-bar"></span>
+               </button>
+               <a class="navbar-brand" th:href="@{'/'}">EmpManager</a>
+            </div>
+            <ul class="nav navbar-nav">
+               <li><a th:href="@{'/employees?page=1'}">Employees</a></li>
+               <li><a th:href="@{'/salaries?page=1'}">Salaries</a></li>
+            </ul>
+         </div>
+      </nav>
+			<div class="container">
+			  <div class="panel-group">
+			    <div class="panel panel-default">
+			    <div class="panel-heading"><h3>Summary</h3></div>
+			      <div class="panel-body">
+			      <span data-th-text="'Total money spent: '+ ${sum}"></span><br>
+			      <span data-th-text="'Average salary: '+${average}"></span><br>
+			      <span th:if=${highest!=null} data-th-text="'Highest salary: '+ ${highest.amount}+' '+${highest.employee.name}+' '+${highest.employee.surname}"></span><br>
+			      <span th:if=${lowest!=null} data-th-text="'Lowest salary '+ ${lowest.amount}+' '+${lowest.employee.name}+' '+${lowest.employee.surname}"></span>
+			      </div>
+			    </div>
+			   </div>
+			   		<div class="btn-group" role="group">
+					  <a class="btn btn-primary" th:href="@{'/employees/new'}">Add new Employee</a>
+					  <a class="btn btn-primary" th:href="@{'/salaries/new'}">Add new Salary</a>
+					  <a class="btn btn-primary" th:href="@{'/salaries/monthly'}">Average salary monthly</a>
+				  </div>
+			  </div>
+			<div class="container">
+				<h3>Total salary per employee</h3>
+				<canvas class="center-block" id="myChart" width="600" height="400"></canvas>
+			</div>
+      <!-- /.container -->
+      <footer class="footer">
+         <div class="container">
+            <p class="text-muted">Paweł Wójcik</p>
+         </div>
+      </footer>
+   </body>
+</html>
