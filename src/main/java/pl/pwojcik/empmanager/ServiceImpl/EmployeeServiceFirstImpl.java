@@ -63,7 +63,7 @@ public class EmployeeServiceFirstImpl implements EmployeeService {
 				.findUserByQueryCriteria(HelperMethods.getQueryParam(name),
 				HelperMethods.getQueryParam(surname), HelperMethods.getQueryParam(email),
 				HelperMethods.getQueryParam(phone), HelperMethods.getQueryParam(hireDateFrom, new Date(0)),
-				HelperMethods.getQueryParam(hireDateTo, new Date(System.currentTimeMillis())));
+				HelperMethods.getQueryParam(hireDateTo, HelperMethods.getDistantFutureDate()));
 		System.err.println("employees  count!"+ employees.size());
 		HelperMethods.sortEmployees(employees, column, sortDirection);
 		return employees;

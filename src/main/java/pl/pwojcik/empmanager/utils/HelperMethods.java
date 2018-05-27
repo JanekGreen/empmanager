@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -144,6 +145,12 @@ public class HelperMethods {
 
 			}
 		}
+	}
+	public static Date getDistantFutureDate() {
+	
+		Calendar cal = Calendar.getInstance();
+		cal.set(2100, 12, 01);
+		return new java.sql.Date(cal.getTime().getTime());
 	}
 	 public static <T> List<T> toList(Iterable<T> iterable){
 		List<T> result = new ArrayList<>();

@@ -73,7 +73,7 @@ public class SalaryServiceFirstImpl implements SalaryService {
 			 Optional<String> amountTo, Optional<String> dateFrom, Optional<String> dateTo, Optional<String> name, Optional<String> surname,
 			 Sort.Direction sortDirection, String column) {
 		System.err.println("service !datefrom:! "+dateFrom+"!date to!"+ dateTo);   
-		List<Salary> salaries = salaryRepository.findSalaryByQueryCriteria(HelperMethods.getQueryParam(description), HelperMethods.getQueryParam(amountFrom, 1.0d), HelperMethods.getQueryParam(amountTo,Double.MAX_VALUE), HelperMethods.getQueryParam(dateFrom, new Date(0)), HelperMethods.getQueryParam(dateTo, new Date(System.currentTimeMillis())), 
+		List<Salary> salaries = salaryRepository.findSalaryByQueryCriteria(HelperMethods.getQueryParam(description), HelperMethods.getQueryParam(amountFrom, 1.0d), HelperMethods.getQueryParam(amountTo,Double.MAX_VALUE), HelperMethods.getQueryParam(dateFrom, new Date(0)), HelperMethods.getQueryParam(dateTo, HelperMethods.getDistantFutureDate()), 
 				 HelperMethods.getQueryParam(name), HelperMethods.getQueryParam(surname));
 		   HelperMethods.sortSalaries(salaries, column, sortDirection);
 		   System.err.println("salaries  count!"+ salaries.size());
@@ -139,7 +139,7 @@ public class SalaryServiceFirstImpl implements SalaryService {
 	public List<MonthlyAverage> getAvgSalaryPerMonth(Optional<String> dateFrom, Optional<String> dateTo) {
 		
 		Date dateFrom_= HelperMethods.getQueryParam(dateFrom, new Date(0));
-		Date dateTo_= HelperMethods.getQueryParam(dateTo, new Date(System.currentTimeMillis()));
+		Date dateTo_= HelperMethods.getQueryParam(dateTo, new Date(HelperMethods.getDistantFutureDate().getTime()));
 	
 		List<Object[]> dbRawData = salaryRepository.getAvgSalaryPerMonth(dateFrom_, dateTo_);
 		List<MonthlyAverage> result = new ArrayList<>();
